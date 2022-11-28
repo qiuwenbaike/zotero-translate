@@ -54,6 +54,10 @@ Zotero.Utilities.Translate.prototype.strToDate = Zotero.Date.strToDate;
 Zotero.Utilities.Translate.prototype.strToISO = Zotero.Date.strToISO;
 Zotero.Utilities.Translate.prototype.createContextObject = Zotero.OpenURL.createContextObject;
 Zotero.Utilities.Translate.prototype.parseContextObject = Zotero.OpenURL.parseContextObject;
+Zotero.Utilities.Translate.prototype.itemTypeExists = Zotero.Utilities.Item.itemTypeExists;
+Zotero.Utilities.Translate.prototype.itemToCSLJSON = Zotero.Utilities.Item.itemToCSLJSON;
+Zotero.Utilities.Translate.prototype.itemFromCSLJSON = Zotero.Utilities.Item.itemFromCSLJSON;
+Zotero.Utilities.Translate.prototype.itemToLegacyExportFormat = Zotero.Utilities.Item.itemToLegacyExportFormat;
 
 /**
  * Hack to overloads {@link Zotero.Utilities.capitalizeTitle} to allow overriding capitalizeTitles 
@@ -286,7 +290,7 @@ Zotero.Utilities.Translate.prototype.processDocuments = async function (urls, pr
 * Send an asynchronous HTTP request, returning a promise.
 *
 * @param {string} url URL to request
-* @param {string} [options.method] The method of the request ("GET", "POST", etc.)
+* @param {string} [options.method=GET] The method of the request ("GET", "POST", etc.)
 * @param {object} [options.requestHeaders] HTTP headers to send with the request
 * @param {string} [options.body] The request's body
 * @param {string} [options.responseCharset] The charset the response should be interpreted as
@@ -323,7 +327,7 @@ Zotero.Utilities.Translate.prototype.request = async function (url, options = {}
 		.forEach(parts => headers[parts.shift()] = parts.join(': '));
 	let body = xhr.response;
 
-	if (options.responseType === 'document' && !('location' in body)) {
+	if (options.responseType === 'document' && body && !body.location) {
 		body = Zotero.HTTP.wrapDocument(body, xhr.responseURL);
 	}
 
